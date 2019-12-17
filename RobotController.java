@@ -1,15 +1,4 @@
-package chapter3;
 
-/**
- * The main executive class for the Robot Controller problem in chapter 3.
- * 
- * We'll create a maze by hand, and feed it to the GeneticAlgorithm's
- * `evalPopulation` method, which is then responsible for scoring an abstract
- * robot with sensors against the maze.
- * 
- * @author bkanber
- *
- */
 public class RobotController {
 
 	/**
@@ -71,26 +60,26 @@ public class RobotController {
 		int elitismCount = 2;
 		int tournamentSize = 10;
 		int chromosomeLength = 128; //64 pairs of 2 bit directions
-		GeneticAlgorithm ga = new GeneticAlgorithm(populationSize, mutationRate, crossoverRate, elitismCount, tournamentSize);
-		Population population = ga.initPopulation(chromosomeLength);
+		GeneticAlgorithm ga = new GeneticAlgorithm(populationSize, elitismCount, tournamentSize, mutationRate, crossoverRate);
+		// GeneticAlgorithm ga = new GeneticAlgorithm(populationSize, mutationRate, crossoverRate, elitismCount, tournamentSize);
+		Population population = ga.newPopulation(chromosomeLength);
 		
 		// Keep track of current generation
 		int generation = 1;
 		
-		ga.evalPopulation(population, maze);
+		ga.Polulation_fitnessScore(population, maze);
 		
 		// Start evolution loop
-		while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
+		while (ga.ExceedMaxGeneration(generation, maxGenerations) == false) {
 			// Print fittest individual from population
 			Individual fittest = population.getFittest(0);
 			System.out.printf("The fittest Individual after %d generations has fitness %.2f: %s\n", generation, fittest.getFitness(), fittest.toString());
 			// Apply crossover
-			population = ga.crossoverPopulation(population);
+			population = ga.corssover(population);
 			// Apply mutation
-			population = ga.mutatePopulation(population);
+			population = ga.mutate(population);
 			// Evaluate population
-			ga.evalPopulation(population, maze);
-
+			ga.Polulation_fitnessScore(population, maze);
 			// Increment the current generation
 			generation++;
 		}

@@ -1,25 +1,6 @@
-package chapter3;
 
 import java.util.ArrayList;
 
-/**
- * This class abstracts a maze through which a robot will have to navigate. The
- * maze is represented as a 2d array of integers, with different environment
- * types represented by integers as follows:
- * 
- * 0 = Empty 
- * 1 = Wall 
- * 2 = Starting position 
- * 3 = Route 
- * 4 = Goal position
- * 
- * The most significant method in this class is `scoreRoute`, which will return
- * a fitness score for a path; it is this score that the genetic algorithm will
- * optimize.
- * 
- * @author bkanber
- *
- */
 public class Maze {
 	private final int maze[][];
 	private int startPosition[] = { -1, -1 };
@@ -29,11 +10,6 @@ public class Maze {
 		this.maze = maze;
 	}
 
-	/**
-	 * Get start position of maze
-	 * 
-	 * @return int[] x,y start position of maze
-	 */
 	public int[] getStartPosition() {
 		if (startPosition[0]>=0) return startPosition;
 		for (int i=0; i<this.maze.length; i++) {
@@ -48,74 +24,28 @@ public class Maze {
 		return startPosition;
 	}
 
-	/**
-	 * Gets value for position of maze
-	 * 
-	 * @param x
-	 *            position
-	 * @param y
-	 *            position
-	 * @return int Position value
-	 */
 	public int getPositionValue(int x, int y) {
 		if (!this.inMaze(x, y)) return 1;
 		return this.maze[x][y];
 	}
-	
-	/**
-	 * Check if position is in maze
-	 * 
-	 * @param x
-	 *            position
-	 * @param y
-	 *            position
-	 * @return boolean
-	 */
+
 	public boolean inMaze(int x, int y) {
 		return x>-1 && y>-1 && x<this.maze.length && y<this.maze[0].length;
 	}
 
-	/**
-	 * Check if position is wall
-	 * 
-	 * @param x
-	 *            position
-	 * @param y
-	 *            position
-	 * @return boolean
-	 */
+
 	public boolean isWall(int x, int y) {
         return (!this.inMaze(x, y)) || this.maze[x][y] == 1;
 	}
 
-	/**
-	 * Gets maximum index of x position
-	 * 
-	 * @return int Max index
-	 */
 	public int getMaxX() {
         return this.maze.length-1;
 	}
 
-	/**
-	 * Gets maximum index of y position
-	 * 
-	 * @return int Max index
-	 */
 	public int getMaxY() {
         return this.maze[0].length-1;
 	}
 
-	/**
-	 * Scores a maze route
-	 * 
-	 * This method inspects a route given as an array, and adds a point for each
-	 * correct step made. We also have to be careful not to reward re-visiting
-	 * correct paths, otherwise you could get an infinite score just by wiggling
-	 * back and forth on the route.
-	 * 
-	 * @return int Max index
-	 */
 	public int scoreRoute(ArrayList<int[]> route) {
 		this.visited = new int[maze.length][maze[0].length];
 		int score = 0;

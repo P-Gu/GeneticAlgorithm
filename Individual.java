@@ -1,7 +1,5 @@
 // Amanda Shen 
 // inidividual class for genetic algorithm 
-import java.util.*;
-import java.math.*;
 
 public class Individual {
     private int id;
