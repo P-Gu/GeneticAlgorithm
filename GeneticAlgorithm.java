@@ -81,7 +81,7 @@ public class GeneticAlgorithm {
         return newPop;
     }
 
-    public Population corssover (Population population) {
+    public Population crossover (Population population) {
         Population newPop = new Population(this.pop_size);
 
         for (int i = 0; i < population.size(); i++) {
