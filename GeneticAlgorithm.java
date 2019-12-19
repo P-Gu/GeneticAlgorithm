@@ -64,10 +64,11 @@ public class GeneticAlgorithm {
             for (int j = 0; j < indi.getChromosomeLength(); j++) {
                 if (i >= this.good_chromosome_count) {
                     if (this.m_rate >= Math.random()) {
-                        int newGene = 0;
+                        int newGene = 1;
                         if (indi.getGene(j) == 1) {
                             newGene = 0;
                         }
+			// mutate gene
                         indi.setGene(j, newGene);
                     }
                     
