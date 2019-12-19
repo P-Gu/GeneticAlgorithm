@@ -30,7 +30,7 @@ public class GeneticAlgorithm {
         return result;
     }
 
-    public double Polulation_fitnessScore (Population population, Maze maze) {
+    public double Population_fitnessScore (Population population, Maze maze) {
         double result = 0;
         for (Individual each : population.getIndividuals()) {
             result += this.Individual_fitnessScore(each, maze);
