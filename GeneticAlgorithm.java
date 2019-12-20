@@ -24,13 +24,15 @@ public class GeneticAlgorithm {
     public double Individual_fitnessScore (Individual individual, Maze maze) {
         int[] current = individual.getChromosome();
         Robot robot = new Robot(current, maze, 100); // 100 is maxmoves
+
+        // start the robot 
         robot.run();
         double result = maze.scoreRoute(robot.getRoute());
         individual.setFitness(result);
         return result;
     }
 
-    public double Population_fitnessScore (Population population, Maze maze) {
+    public double Polulation_fitnessScore (Population population, Maze maze) {
         double result = 0;
         for (Individual each : population.getIndividuals()) {
             result += this.Individual_fitnessScore(each, maze);
@@ -44,6 +46,7 @@ public class GeneticAlgorithm {
         return result;
     }
 
+        /// like select parent
     public Individual BestParent (Population population) {
         Population newPop = new Population(this.t_size);
         population.shuffle();
@@ -63,12 +66,11 @@ public class GeneticAlgorithm {
             // loop throught its gene and mutate accordingly 
             for (int j = 0; j < indi.getChromosomeLength(); j++) {
                 if (i >= this.good_chromosome_count) {
-                    if (this.m_rate >= Math.random()) {
+                    if (this.m_rate >  Math.random()) {
                         int newGene = 1;
                         if (indi.getGene(j) == 1) {
                             newGene = 0;
                         }
-			// mutate gene
                         indi.setGene(j, newGene);
                     }
                     
@@ -89,8 +91,11 @@ public class GeneticAlgorithm {
             // get current chromosome as individual 
             Individual p1 = population.getFittest(i);
             // loop throught its gene and mutate accordingly 
+
+            // this.good_chromosome_count is to take account for elitism
+            // we want to priortize keeping the good part of the individual candidate
             if (i >= this.good_chromosome_count) {
-                if (this.c_rate >= Math.random()) {
+                if (this.c_rate > Math.random()) {
                     Individual child = new Individual(p1.getChromosomeLength());
                     Individual p2 = this.BestParent(population);
                     int swapPoint = (int) (Math.random() * (p1.getChromosomeLength() + 1));
@@ -104,6 +109,9 @@ public class GeneticAlgorithm {
                     }
                     // add new child to new population 
 				    newPop.setIndividual(i, child);
+                }
+                else {
+                    newPop.setIndividual(i, p1);
                 }
             } else {
                 newPop.setIndividual(i, p1);
