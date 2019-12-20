@@ -225,12 +225,12 @@ public class Robot {
 			fly = this.yPos+1;
 			frx = this.xPos-1;
 			fry = this.yPos-1;
-			lx = this.xPos-1;
-			ly = this.yPos;
-			rx = this.xPos+1;
-			ry = this.yPos;
-			bx = this.xPos;
-			by = this.yPos+1;
+			lx = this.xPos;
+			ly = this.yPos+1;
+			rx = this.xPos;
+			ry = this.yPos-1;
+			bx = this.xPos+1;
+			by = this.yPos;
 		}
 		frontSensor = this.maze.isWall(fx, fy);
         frontLeftSensor = this.maze.isWall(flx, fly);
@@ -281,12 +281,5 @@ public class Robot {
         return this.route;
     }
     
-    public String printRoute(){
-        String route = "";      
-        for (Object routeStep : this.route) {
-            int step[] = (int[]) routeStep;
-            route += "{" + step[0] + "," + step[1] + "}";
-        }
-        return route;
-    }
+
 }
