@@ -26,37 +26,20 @@ public class Robot {
         this.headDirect = Direction.EAST;
         this.maxMoves = maxMoves;
         this.movesCounter = 0;
-        this.route = new ArrayList<int[]>();
-        this.route.add(startPos);
+        this.route = new ArrayList<int[]>() {{
+        	add(startPos);
+        }};
     }
     
-    /**
-     * Runs the robot's actions based on sensor inputs
-     */
     public void run(){
         // we keep the robot to run until runs too much or stops
         // not need to stop
         Boolean stop = false;
-        while(stop.equals(false)){    
-            // keep track of scores for fitness test       
+        while(!stop){       
             this.movesCounter++;
-            
-            // Break if the robot stops moving
-            if (this.getNextAction() == 0) {
+            if (this.getNextAction() == 0 || this.maze.getPositionValue(this.xPos, this.yPos) == 4 || this.movesCounter > this.maxMoves) {
                 stop = true;
             }
-
-            // Break if we reach the goal
-            if (this.maze.getPositionValue(this.xPos, this.yPos) == 4) {
-                stop = true;
-            }
-            
-            // Break if we reach a maximum number of moves
-            if (this.movesCounter > this.maxMoves) {
-                stop = true;
-            }
-
-            // Run action
             this.NextAction();
         }
     }
@@ -97,14 +80,7 @@ public class Robot {
         return sensorActions;
     }
     
-    /**
-     * Runs the next action
-     */
     public void NextAction(){
-        // We use four actions binary to integer representation
-        // Since the integer representation of 0 is 00 and the action is ``DO nothing",
-        // we do not change our heading
-
         // Move forward
         if (this.getNextAction() == 1) {
             int currentX = this.xPos;
@@ -112,25 +88,25 @@ public class Robot {
             
             // Move depending on current direction
             if (Direction.NORTH == this.headDirect) {
-                this.yPos += -1;
+                this.yPos--;
                 if (this.yPos < 0) {
                     this.yPos = 0;
                 }
             }
             else if (Direction.EAST == this.headDirect) {
-                this.xPos += 1;
+                this.xPos++;
                 if (this.xPos > this.maze.getMaxX()) {
                     this.xPos = this.maze.getMaxX();
                 }
             }
             else if (Direction.SOUTH == this.headDirect) {
-                this.yPos += 1;
+                this.yPos++;
                 if (this.yPos > this.maze.getMaxY()) {
                     this.yPos = this.maze.getMaxY();
                 }
             }
             else if (Direction.WEST == this.headDirect) {
-                this.xPos += -1;
+                this.xPos--;
                 if (this.xPos < 0) {
                     this.xPos = 0;
                 }
@@ -148,7 +124,7 @@ public class Robot {
             }
         }
 
-        // Turn left (clockwise)
+        // Turn left
         else if(this.getNextAction() == 2) {
             if (Direction.NORTH == this.headDirect) {
                 this.headDirect = Direction.EAST;
@@ -163,7 +139,7 @@ public class Robot {
                 this.headDirect = Direction.NORTH;
             }
         }
-        // Turn right (anti-clockwise)
+        // Turn right
         else if(this.getNextAction() == 3) {
             if (Direction.NORTH == this.headDirect) {
                 this.headDirect = Direction.WEST;
@@ -198,60 +174,90 @@ public class Robot {
                 
 		boolean frontSensor, frontLeftSensor, frontRightSensor, leftSensor, rightSensor, backSensor;
 		frontSensor = frontLeftSensor = frontRightSensor = leftSensor = rightSensor = backSensor = false;
-
-        // Find which sensors have been activated
-        if (this.getHeading() == Direction.NORTH) {
-            frontSensor = this.maze.isWall(this.xPos, this.yPos-1);
-            frontLeftSensor = this.maze.isWall(this.xPos-1, this.yPos-1);
-            frontRightSensor = this.maze.isWall(this.xPos+1, this.yPos-1);
-            leftSensor = this.maze.isWall(this.xPos-1, this.yPos);
-            rightSensor = this.maze.isWall(this.xPos+1, this.yPos);
-            backSensor = this.maze.isWall(this.xPos, this.yPos+1);
-        }
-        else if (this.getHeading() == Direction.EAST) {
-            frontSensor = this.maze.isWall(this.xPos+1, this.yPos);
-            frontLeftSensor = this.maze.isWall(this.xPos+1, this.yPos-1);
-            frontRightSensor = this.maze.isWall(this.xPos+1, this.yPos+1);
-            leftSensor = this.maze.isWall(this.xPos, this.yPos-1);
-            rightSensor = this.maze.isWall(this.xPos, this.yPos+1);
-            backSensor = this.maze.isWall(this.xPos-1, this.yPos);
-        }
-        else if (this.getHeading() == Direction.SOUTH) {
-            frontSensor = this.maze.isWall(this.xPos, this.yPos+1);
-            frontLeftSensor = this.maze.isWall(this.xPos+1, this.yPos+1);
-            frontRightSensor = this.maze.isWall(this.xPos-1, this.yPos+1);
-            leftSensor = this.maze.isWall(this.xPos+1, this.yPos);
-            rightSensor = this.maze.isWall(this.xPos-1, this.yPos);
-            backSensor = this.maze.isWall(this.xPos, this.yPos-1);
-        }
-        else {
-            frontSensor = this.maze.isWall(this.xPos-1, this.yPos);
-            frontLeftSensor = this.maze.isWall(this.xPos-1, this.yPos+1);
-            frontRightSensor = this.maze.isWall(this.xPos-1, this.yPos-1);
-            leftSensor = this.maze.isWall(this.xPos, this.yPos+1);
-            rightSensor = this.maze.isWall(this.xPos, this.yPos-1);
-            backSensor = this.maze.isWall(this.xPos+1, this.yPos);
-        }
+        
+		int fx, fy, flx, fly, frx, fry, lx, ly, rx, ry, bx, by;
+		if (this.getHeading() == Direction.NORTH) {
+			fx = this.xPos;
+			fy = this.yPos-1;
+			flx = this.xPos-1;
+			fly = this.yPos-1;
+			frx = this.xPos+1;
+			fry = this.yPos-1;
+			lx = this.xPos-1;
+			ly = this.yPos;
+			rx = this.xPos+1;
+			ry = this.yPos;
+			bx = this.xPos;
+			by = this.yPos+1;
+		}
+		else if (this.getHeading() == Direction.EAST) {
+			fx = this.xPos+1;
+			fy = this.yPos;
+			flx = this.xPos+1;
+			fly = this.yPos-1;
+			frx = this.xPos+1;
+			fry = this.yPos+1;
+			lx = this.xPos;
+			ly = this.yPos-1;
+			rx = this.xPos;
+			ry = this.yPos+1;
+			bx = this.xPos-1;
+			by = this.yPos;
+		}
+		else if (this.getHeading() == Direction.SOUTH) {
+			fx = this.xPos;
+			fy = this.yPos+1;
+			flx = this.xPos+1;
+			fly = this.yPos+1;
+			frx = this.xPos-1;
+			fry = this.yPos+1;
+			lx = this.xPos+1;
+			ly = this.yPos;
+			rx = this.xPos-1;
+			ry = this.yPos;
+			bx = this.xPos;
+			by = this.yPos-1;
+		}
+		else {
+			fx = this.xPos-1;
+			fy = this.yPos;
+			flx = this.xPos-1;
+			fly = this.yPos+1;
+			frx = this.xPos-1;
+			fry = this.yPos-1;
+			lx = this.xPos-1;
+			ly = this.yPos;
+			rx = this.xPos+1;
+			ry = this.yPos;
+			bx = this.xPos;
+			by = this.yPos+1;
+		}
+		frontSensor = this.maze.isWall(fx, fy);
+        frontLeftSensor = this.maze.isWall(flx, fly);
+        frontRightSensor = this.maze.isWall(frx, fry);
+        leftSensor = this.maze.isWall(lx, ly);
+        rightSensor = this.maze.isWall(rx, ry);
+        backSensor = this.maze.isWall(bx, by);
                 
         // Calculate sensor value
         int sensorVal = 0;
         
-        if (frontSensor == true) {
+        if (frontSensor) { //increment the 1st digit in binary
             sensorVal += 1;
         }
-        if (frontLeftSensor == true) {
+        if (frontLeftSensor) { //increment the 2nd digit in binary
             sensorVal += 2;
         }
-        if (frontRightSensor == true) {
+        if (frontRightSensor) { //increment the 3rd digit in binary
             sensorVal += 4;
         }
-        if (leftSensor == true) {
+        if (leftSensor) { //increment the 4th digit in binary
             sensorVal += 8;
         }
-        if (rightSensor == true) {
+        if (rightSensor) { //increment the 5th digit in binary
             sensorVal += 16;
         }
-        if (backSensor == true) {
+        if (backSensor) { //increment the 6th digit in binary
             sensorVal += 32;
         }
 
@@ -271,33 +277,12 @@ public class Robot {
         return this.headDirect;
     }
     
-    /**
-     * Returns robot's complete route around the maze
-     * 
-     * @return ArrayList<int> Robot's route
-     */
     public ArrayList<int[]> getRoute(){       
         return this.route;
     }
     
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Returns route in printable format
-     * 
-     * @return String Robot's route
-     */
     public String printRoute(){
-        String route = "";
-        
+        String route = "";      
         for (Object routeStep : this.route) {
             int step[] = (int[]) routeStep;
             route += "{" + step[0] + "," + step[1] + "}";
